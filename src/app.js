@@ -1,3 +1,10 @@
+app.get("/version", (req, res) => {
+  res.json({
+    name: "license-core",
+    version: "1.0.0",
+    environment: process.env.NODE_ENV || "development"
+  });
+});
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
