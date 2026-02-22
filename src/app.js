@@ -1,19 +1,16 @@
-capp.get("/", (req, res) => {
-  res.json({ status: "License Core OK" });
-});
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 
-const licenseRoutes = require("./routes/license.routes");
-
 const app = express();
 
-app.use(helmet());
+// Middlewares
 app.use(cors());
+app.use(helmet());
 app.use(express.json());
 
+// Rate limit
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100
@@ -21,6 +18,9 @@ const limiter = rateLimit({
 
 app.use(limiter);
 
-app.use("/api/license", licenseRoutes);
+// Health check
+app.get("/", (req, res) => {
+  res.json({ status: "License Core OK" });
+});
 
 module.exports = app;
