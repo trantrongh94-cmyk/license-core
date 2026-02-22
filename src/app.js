@@ -1,12 +1,15 @@
 const express = require("express");
-
 const app = express();
 
 app.use(express.json());
 
-const { signLicense } = require("./utils/jwt");
+// ✅ CHỈ require 1 LẦN DUY NHẤT
+const { signLicense, verifyLicense } = require("./utils/jwt");
+
+
+// ================= ACTIVATE =================
 app.post("/api/license/activate", (req, res) => {
-  const { license_key, device_id } = req.body;
+  const { license_key, device_id } = req.body || {};
 
   if (!license_key || !device_id) {
     return res.status(400).json({
@@ -25,21 +28,10 @@ app.post("/api/license/activate", (req, res) => {
   });
 });
 
-app.get("/", (req, res) => {
-  res.json({ status: "License Core OK" });
-});
 
-app.get("/version", (req, res) => {
-  res.json({
-    name: "license-core",
-    version: "1.0.0",
-    env: process.env.NODE_ENV || "production"
-  });
-});
-
-const { signLicense, verifyLicense } = require("./utils/jwt");
+// ================= VERIFY =================
 app.post("/api/license/verify", (req, res) => {
-  const { token } = req.body;
+  const { token } = req.body || {};   // ✅ FIX CRASH
 
   if (!token) {
     return res.status(400).json({ error: "Missing token" });
@@ -58,6 +50,20 @@ app.post("/api/license/verify", (req, res) => {
       error: "Invalid token"
     });
   }
+});
+
+
+// ================= HEALTHCHECK =================
+app.get("/", (req, res) => {
+  res.json({ status: "License Core OK" });
+});
+
+app.get("/version", (req, res) => {
+  res.json({
+    name: "license-core",
+    version: "1.0.0",
+    env: process.env.NODE_ENV || "production"
+  });
 });
 
 module.exports = app;
