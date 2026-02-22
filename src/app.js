@@ -37,4 +37,27 @@ app.get("/version", (req, res) => {
   });
 });
 
+const { signLicense, verifyLicense } = require("./utils/jwt");
+app.post("/api/license/verify", (req, res) => {
+  const { token } = req.body;
+
+  if (!token) {
+    return res.status(400).json({ error: "Missing token" });
+  }
+
+  try {
+    const decoded = verifyLicense(token);
+
+    res.json({
+      valid: true,
+      decoded
+    });
+  } catch (err) {
+    res.status(401).json({
+      valid: false,
+      error: "Invalid token"
+    });
+  }
+});
+
 module.exports = app;

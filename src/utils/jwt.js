@@ -16,3 +16,15 @@ function signLicense(payload) {
 module.exports = {
   signLicense
 };
+const PUBLIC_KEY = process.env.JWT_PUBLIC_KEY;
+
+function verifyLicense(token) {
+  return jwt.verify(token, PUBLIC_KEY, {
+    algorithms: ["RS256"]
+  });
+}
+
+module.exports = {
+  signLicense,
+  verifyLicense
+};
